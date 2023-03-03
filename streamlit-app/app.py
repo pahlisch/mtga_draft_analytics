@@ -69,7 +69,7 @@ def plot_win_rate_over_ata(df, color):
     return fig
 
 
-df = pd.read_csv("../data/ONE_card_rating.csv")
+df = pd.read_csv("./data/ONE_card_rating.csv")
 
 df = clean_data(df)
 
