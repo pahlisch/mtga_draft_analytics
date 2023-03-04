@@ -66,6 +66,8 @@ def plot_win_rate_over_ata(df, color):
                             )
     
     fig.update_traces(marker_size=7)
+    fig.update_layout(height=600, width=800)
+    
     return fig
 
 
