@@ -3,10 +3,14 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 import os
+st.set_page_config(layout="wide")
+
+st.header("Phyrexia All Will Be One Draft Pick Order")
+st.write("The data in this app comes from 17Lands (17lands.com)")
 
 color_dict = {"Red":"R", "Blue":"U", "Black":"B", "Green":"G", "White":"W", "Colorless":"C", "Multicolor":"M"}
 
-st.set_page_config(layout="wide")
+
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_filename = "../data/ONE_card_rating.csv"
@@ -66,10 +70,15 @@ def plot_win_rate_over_ata(df, color):
     "R": "rgb(209,32,36)"
     }
 
+    if display_color == "Yes":
+        color = "Color"
+    else:
+        color = None
+
     fig = px.scatter(sub_df, 
                      y="GD WR", 
                      x="ATA", 
-                     color="Color", 
+                     color=color, 
                      title="Win rate by average turn picked",
                      labels={
                         "GD WR":"Average win rate when in hand or drawn",
@@ -80,8 +89,7 @@ def plot_win_rate_over_ata(df, color):
                      hover_name="Name", 
                      hover_data=[
                             "rounded_pick_order", 
-                            "ATA", "GD WR_q1",
-                            "GD WR_q3"
+                            "ATA"
                             ]
                             )
     
@@ -102,7 +110,8 @@ with st.sidebar:
         color_dict.keys(),
         default=color_dict.keys()
         
-        )   
+        )
+    display_color = st.radio("Display card colors on graph", ["Yes", "No"])
     
 
 fig = plot_win_rate_over_ata(df, color)
