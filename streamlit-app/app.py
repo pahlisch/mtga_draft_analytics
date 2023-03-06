@@ -1,7 +1,17 @@
-# %%
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import os
+
+color_dict = {"Red":"R", "Blue":"U", "Black":"B", "Green":"G", "White":"W", "Colorless":"C", "Multicolor":"M"}
+
+st.set_page_config(layout="wide")
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_filename = "../data/ONE_card_rating.csv"
+
+data_filepath = os.path.join(script_dir, data_filename)
 
 def is_outlier(df, col, q1_col, q3_col, iqr_col):
     
@@ -12,9 +22,11 @@ def is_outlier(df, col, q1_col, q3_col, iqr_col):
     
 def clean_data(df):
 
-    df = df[["Name", "Color", "Rarity", "ATA", "GD WR", "IWD"]]
-    df = df.dropna()    
+    df = df[["Name", "Color", "Rarity", "ATA", "GD WR", "IWD"]]  
+    df["Color"] = df["Color"].fillna("C")
+    df["Color"] = df["Color"].apply(lambda x: x if len(x) == 1 else 'M')
     
+    df = df.dropna()  
     df["GD WR"] = df["GD WR"].apply(lambda x: float(x[:-1]))
     df["IWD"] = df["IWD"].apply(lambda x: float(x[:-2]))
 
@@ -24,9 +36,9 @@ def clean_data(df):
     q1 = df.groupby("rounded_pick_order")[["GD WR", "IWD"]].quantile(0.25)
     q3 = df.groupby("rounded_pick_order")[["GD WR", "IWD"]].quantile(0.75)
 
-    quartile = pd.merge(q1, q3, left_on="rounded_pick_order", right_on="rounded_pick_order", suffixes=('_q1', '_q3'))
+    quartile = pd.merge(q1, q3, left_on="rounded_pick_order", right_on="rounded_pick_order", suffixes=("_q1", "_q3"))
 
-    df = pd.merge(df, quartile, left_on='rounded_pick_order', right_on='rounded_pick_order')
+    df = pd.merge(df, quartile, left_on="rounded_pick_order", right_on="rounded_pick_order")
 
 
     df["IWD_iqr"] = df["IWD_q3"] - df["IWD_q1"]
@@ -40,23 +52,31 @@ def clean_data(df):
 
 def plot_win_rate_over_ata(df, color):
 
-    color_dict = {'Red':"R", 'Blue':"U", 'Black':"B", 'Green':"G", 'White':"W"}
     color = [color_dict[n] for n in color]
 
     sub_df = df[df["Color"].isin(color)]
 
+    color_map = {
+    "C": "#c3c3c3",
+    "B": "#303030",
+    "W": "rgb(247,225,160)",
+    "G": "rgb(26,115,49)",
+    "M": "rgb(218,165,32)",
+    "U": "rgb(33,84,154)",
+    "R": "rgb(209,32,36)"
+    }
+
     fig = px.scatter(sub_df, 
                      y="GD WR", 
                      x="ATA", 
-                     color="GD_WR_outlier", 
+                     color="Color", 
                      title="Win rate by average turn picked",
                      labels={
                         "GD WR":"Average win rate when in hand or drawn",
                         "ATA":"Average turn picked",
-                        "GD_WR_outlier": "Outliers"
+                        "Color":"Card Color"
                      },
-                     color_discrete_sequence={False: 'rgb(55, 126, 184)', True: 'rgb(204, 80, 62)'},
-    
+                     color_discrete_sequence=list(color_map.values()),
                      hover_name="Name", 
                      hover_data=[
                             "rounded_pick_order", 
@@ -66,23 +86,26 @@ def plot_win_rate_over_ata(df, color):
                             )
     
     fig.update_traces(marker_size=7)
-    fig.update_layout(height=600, width=800)
-    
+    fig.update_layout(autosize=True, height=700, width=1200)
+    fig.update_layout(xaxis=dict(dtick=2))
+
     return fig
 
 
-df = pd.read_csv("./data/ONE_card_rating.csv")
+df = pd.read_csv(data_filepath)
 
 df = clean_data(df)
 
-
-color = st.multiselect(
-    'Color',
-    ['Red', 'Blue', 'Black', 'Green', 'White'],
-    default=['Red', 'Blue', 'Black', 'Green', 'White'],
+with st.sidebar:
+    color = st.multiselect(
+        "Color",
+        color_dict.keys(),
+        default=color_dict.keys()
+        
+        )   
     
-)
+
 fig = plot_win_rate_over_ata(df, color)
-st.plotly_chart(fig, use_container_width=False)
+st.plotly_chart(fig, use_container_width=True)
 
 # %%

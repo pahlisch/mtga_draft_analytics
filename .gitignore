@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 *.csv
+!ONE_card_rating.csv
 
 # Distribution / packaging
 .Python
