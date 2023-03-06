@@ -70,6 +70,9 @@ def plot_win_rate_over_ata(df, color):
     "R": "rgb(209,32,36)"
     }
 
+    #using a dictionary as color_map is throwing an error, this is a workaround so I can pass a list as argument
+    color_map = {key:value for key, value in color_map.items() if key in color}
+
     if display_color == "Yes":
         color = "Color"
     else:
