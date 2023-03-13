@@ -164,6 +164,7 @@ class Scraper():
         for dict in self.missing_data:
             if dict["extension"] == self.extension_name and dict["user_group"] == self.user_group and dict["format"] == self.format_name:
                 return True
+        return False
             
     def set_missing_data(self, file_path):
         with open(file_path) as f:
@@ -194,13 +195,14 @@ class Scraper():
 
                     self.set_file_name(extension, user, format)
 
-                    if self.file_name in self.already_downloaded:
+                    if self.file_name in self.already_downloaded or self.check_missing_data():
                         continue
 
                     if extension.get_attribute("text") in self.extension_to_download or self.download_all:
                         extension.click()
 
                         if self.is_warning_message_displayed() or self.is_data_table_null():
+                            self.log_missing_data()
                             continue
                         else:
                             self.locate_and_click_export()
@@ -210,9 +212,12 @@ class Scraper():
 
 
 scraper = Scraper(download_path)
-
-scraper.scrape()
+try:
+    scraper.scrape()
+except:
+    scraper.dump_missing_data("missing_data.json")
 
 scraper.save_data("all_data.csv")
+scraper.dump_missing_data("missing_data.json")
 
 
