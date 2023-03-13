@@ -5,24 +5,11 @@
 
 {% block content %}
     <div id='chart' class='chart'”></div>
-    <p>
       <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script type='text/javascript'>
     let graphs = {{graphJSON | safe}};
     plot = Plotly.newPlot('chart',graphs,{}); 
-    // Grab the embed's contentWindow by the iframe id
-  
-
-    // send a message to the contentWindow
-    plot.postMessage(
-            {
-                'task': 'hover',
-                'selection': {xval: 2, yval: 45},
-                // 'subplot': 'xy' optional: for graphs with subplots, specify which subplot
-            },
-            'https://plot.ly');
     </script>
-    </p>
 
 
 {% endblock %}
