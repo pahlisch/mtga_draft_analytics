@@ -1,16 +1,36 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Figure{% endblock %}</h1>
+{% endblock %}
 
 {% block content %}
-    <div id='chart' class='chart'”></div>
+    <div class="container">
+      <h2>
+        {% block title %}Card win rate when in hand or drawn{% endblock %}
+      </h2>
+      <div class="row">
+        <div class="col"><div class="dropdown p-1">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div id='chart' class='chart'”>
+          </div>
+        </div>
+    </div>
+      </div>
       <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script type='text/javascript'>
     let graphs = {{graphJSON | safe}};
     plot = Plotly.newPlot('chart',graphs,{}); 
     </script>
-
-
-{% endblock %}
 {% endblock %}
