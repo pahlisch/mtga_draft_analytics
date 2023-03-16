@@ -4,33 +4,55 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-      <h2>
-        {% block title %}Card win rate when in hand or drawn{% endblock %}
-        <p>{{selected_value}}</p>
-      </h2>
-      <form class="form-inline" name="extension_select" method="POST">
-        <div class="form-group">
-          <div class="input-group">
-                <select class="form-control" name="extension_list">
-                    {% for extension in extension_list %}
-                    <option value="{{extension}}">{{extension}}</option>
-                    {% endfor %}
-                  </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Generate graph</button>
-        </div>
-      <div class="row">
-        <div class="col">
-          <div id='chart' class='chart p-3'”>
-          </div>
-        </div>
-    </div>
+<div class="container">
+  <h2>
+    {% block title %}Card win rate when in hand or drawn{% endblock %}
+    <p>{{form}}</p>
+  </h2>
+  <div class="row">
+    <form class="form" name="extension_select" method="POST">
+      <div class="col-md-3 mb-2">
+        <select class="form-control" name="extension_list">
+          {% for extension in extension_list %}
+          {% if extension == selected_value %}
+          <option value="{{extension}}" selected>{{extension}}</option>
+          {% else %}
+          <option value="{{extension}}">{{extension}}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
       </div>
-      <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-    <script type='text/javascript'>
-    let graphs = {{graphJSON | safe}};
-    plot = Plotly.newPlot('chart', graphs, {}); 
-    </script>
-    <script type='text/javascript' src="static/search.js"></script>
+      <div class="col-md-3 mb-2">
+          <select class="form-control" name="format_list">
+            {% for format in format_list %}
+            {% if format == selected_format %}
+            <option value="{{format}}" selected>{{format}}</option>
+            {% else %}
+            <option value="{{format}}">{{format}}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 mb-2">
+      <button type="submit" class="btn btn-primary">Generate graph</button>
+    </div>
+  </form>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div id='chart' class='rounded' ”>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type='text/javascript'>
+  let graphs = {{ graphJSON | safe}};
+  plot = Plotly.newPlot('chart', graphs, {}); 
+</script>
+<script type='text/javascript' src="static/search.js"></script>
+
 {% endblock %}

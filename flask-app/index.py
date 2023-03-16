@@ -16,7 +16,7 @@ color_dict = {"Red":"R", "Blue":"U", "Black":"B", "Green":"G", "White":"W", "Col
     
 def clean_data(df):
 
-    df = df[["Name", "Color", "Rarity", "ATA", "GD WR", "IWD", "extension_name"]]  
+    df = df[["Name", "Color", "Rarity", "ATA", "GD WR", "IWD", "extension_name", "format"]]  
     df["Color"] = df["Color"].fillna("C")
     df["Color"] = df["Color"].apply(lambda x: x if len(x) == 1 else 'M')
     
@@ -80,21 +80,37 @@ def index():
 
     data_filepath = os.path.join(script_dir, data_filename)
 
-    extension = request.form["extension_list"]
-
     df = pd.read_csv(data_filepath)
 
     df = clean_data(df)
 
+    if request.form.to_dict() == {}:
+        extension = df["extension_name"].iloc[0]
+        format = df["format"].iloc[0]
+    else:
+        extension = request.form["extension_list"]
+        format = request.form["format_list"]
+
+
     extension_list = list(df["extension_name"].unique())
+
+    format_list = list(df["format"].unique())
 
     if extension != None:
         df = df[df["extension_name"] == extension]
+    if format != None:
+        df = df[df["format"] == format]
 
     fig = plot_win_rate_over_ata(df, color_dict.keys())
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-    return render_template("index.html", graphJSON=graphJSON, extension_list=extension_list, selected_value=extension)
+    return render_template("index.html", 
+                           graphJSON=graphJSON, 
+                           extension_list=extension_list, 
+                           selected_value=extension, 
+                           format_list = format_list, 
+                           selected_format=format
+                           )
 
 
