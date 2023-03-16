@@ -7,23 +7,22 @@
     <div class="container">
       <h2>
         {% block title %}Card win rate when in hand or drawn{% endblock %}
+        <p>{{selected_value}}</p>
       </h2>
-      <div class="row">
-        <div class="col"><div class="dropdown p-1">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown button
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
+      <form class="form-inline" name="extension_select" method="POST">
+        <div class="form-group">
+          <div class="input-group">
+                <select class="form-control" name="extension_list">
+                    {% for extension in extension_list %}
+                    <option value="{{extension}}">{{extension}}</option>
+                    {% endfor %}
+                  </select>
           </div>
+          <button type="submit" class="btn btn-primary">Generate graph</button>
         </div>
-        </div>
-      </div>
       <div class="row">
         <div class="col">
-          <div id='chart' class='chart'”>
+          <div id='chart' class='chart p-3'”>
           </div>
         </div>
     </div>
@@ -31,6 +30,7 @@
       <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
     <script type='text/javascript'>
     let graphs = {{graphJSON | safe}};
-    plot = Plotly.newPlot('chart',graphs,{}); 
+    plot = Plotly.newPlot('chart', graphs, {}); 
     </script>
+    <script type='text/javascript' src="static/search.js"></script>
 {% endblock %}
