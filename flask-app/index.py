@@ -7,13 +7,10 @@ import os
 import json
 import plotly
 
-
-
-
 bp = Blueprint('index', __name__)
 
 color_dict = {"Red":"R", "Blue":"U", "Black":"B", "Green":"G", "White":"W", "Colorless":"C", "Multicolor":"M"}
-    
+
 def clean_data(df):
 
     df = df[["Name", "Color", "Rarity", "ATA", "GD WR", "IWD", "extension_name", "format"]]  
@@ -53,7 +50,7 @@ def plot_win_rate_over_ata(df, color):
                      y="GD WR", 
                      x="ATA", 
                      #color=color, 
-                     title="Win rate by average turn picked",
+                     title="Win rate when in hand or drawn by average turn picked",
                      labels={
                         "GD WR":"Average win rate when in hand or drawn",
                         "ATA":"Average turn picked",
@@ -61,15 +58,18 @@ def plot_win_rate_over_ata(df, color):
                      },
                     #color_discrete_sequence=list(color_map.values()),
                      hover_name="Name", 
-                     hover_data=[
-                            "rounded_pick_order", 
+                     hover_data=[ 
                             "ATA"
-                            ]
+                            ],
+                    template="plotly_dark"
                             )
     
     fig.update_traces(marker_size=7)
-    fig.update_layout(autosize=True, height=700, width=1200)
-    fig.update_layout(xaxis=dict(dtick=2))
+    fig.update_layout(autosize=True, 
+                      height=700, 
+                      width=1200,
+                      xaxis=dict(dtick=1))
+
 
     return fig
 
@@ -101,9 +101,13 @@ def index():
     if format != None:
         df = df[df["format"] == format]
 
-    fig = plot_win_rate_over_ata(df, color_dict.keys())
+    if len(df.index) > 0:
+        fig = plot_win_rate_over_ata(df, color_dict.keys())
+        graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    else:
+        graphJSON = None
 
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
 
     return render_template("index.html", 
                            graphJSON=graphJSON, 

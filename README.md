@@ -6,4 +6,4 @@ The analysis will focus on identifying cards that are either over or under value
 
 The analysis will be presented on a simple website.
 
-Check out the streamlit app to have a preview: https://mtga-draft.streamlit.app/
+Check out the streamlit app to have a preview (it might be sleeping it doesn't get a lot of clicks): https://mtga-draft.streamlit.app/

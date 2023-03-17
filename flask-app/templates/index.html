@@ -5,8 +5,8 @@
 
 {% block content %}
 <div class="container">
-  <h2>
-    {% block title %}Card win rate when in hand or drawn{% endblock %}
+  <h2 class="py-1">
+    {% block title %}Card win rate when in hand or drawn by average turn when card is picked{% endblock %}
     <p>{{form}}</p>
   </h2>
   <div class="row">
@@ -42,17 +42,22 @@
   </div>
   <div class="row">
     <div class="col">
+      {% if graphJSON != None %}
       <div id='chart' class='rounded' ”>
+      <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+      <script type='text/javascript'>
+        let graphs = {{ graphJSON | safe}};
+        plot = Plotly.newPlot('chart', graphs, {}); 
+      </script>
+      {% else %}
+        <h2 class="text-center t-4">
+          There is no data available for this selection
+        </h2>
+      {% endif %}
       </div>
     </div>
   </div>
 </div>
 
-<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-<script type='text/javascript'>
-  let graphs = {{ graphJSON | safe}};
-  plot = Plotly.newPlot('chart', graphs, {}); 
-</script>
-<script type='text/javascript' src="static/search.js"></script>
 
 {% endblock %}
